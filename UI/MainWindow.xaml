@@ -1,0 +1,271 @@
+<Window x:Class="StretchCord.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="StretchCord"
+        Width="480" Height="680"
+        MinWidth="420" MinHeight="580"
+        ResizeMode="CanMinimize"
+        WindowStartupLocation="CenterScreen"
+        Background="#1E1E2E"
+        FontFamily="Segoe UI">
+
+    <Window.Resources>
+        <!-- Button base style -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="#5865F2"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="14,9"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#4752C4"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#2E2E4A"/>
+                                <Setter Property="Foreground" Value="#556"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Background" Value="#ED4245"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#C03537"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="GhostButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Background" Value="#2A2A3E"/>
+            <Setter Property="BorderBrush" Value="#444466"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#33334A"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SectionHeader" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#7777AA"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+
+        <Style x:Key="StatusDot" TargetType="Ellipse">
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="Height" Value="8"/>
+            <Setter Property="Margin" Value="0,0,6,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- Header -->
+            <RowDefinition Height="*"/>     <!-- Content -->
+            <RowDefinition Height="Auto"/>  <!-- Status bar -->
+        </Grid.RowDefinitions>
+
+        <!-- ═══ Header ═══════════════════════════════════════════════════════ -->
+        <Border Grid.Row="0" Background="#13131F" Padding="20,16">
+            <StackPanel>
+                <TextBlock Text="StretchCord" FontSize="22" FontWeight="Bold"
+                           Foreground="#E0E0F8"/>
+                <TextBlock Text="Stream 4:3 games stretched to Discord"
+                           FontSize="12" Foreground="#6666AA" Margin="0,2,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ═══ Main Content ═══════════════════════════════════════════════════ -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="20,16" x:Name="ContentPanel">
+
+                <!-- ─ Source Selection ─ -->
+                <Border Background="#16162A" CornerRadius="8" Padding="16" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="VIDEO SOURCE" Style="{StaticResource SectionHeader}"/>
+
+                        <TextBlock x:Name="TxtSelectedWindow"
+                                   Text="No window selected"
+                                   Foreground="#8888BB"
+                                   FontSize="13"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,12"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="TxtPid"
+                                       Text=""
+                                       Foreground="#555577"
+                                       FontSize="11"
+                                       VerticalAlignment="Center"/>
+                            <Button Content="🎮 Select Window / Game"
+                                    Grid.Column="1"
+                                    Style="{StaticResource GhostButton}"
+                                    Click="BtnSelectWindow_Click"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ─ Video Controls ─ -->
+                <Border Background="#16162A" CornerRadius="8" Padding="16" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="VIDEO CAPTURE" Style="{StaticResource SectionHeader}"/>
+
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse x:Name="VideoStatusDot" Fill="#3A3A4A"
+                                         Style="{StaticResource StatusDot}"/>
+                                <TextBlock x:Name="TxtVideoStatus"
+                                           Text="Inactive"
+                                           Foreground="#6666AA"
+                                           VerticalAlignment="Center"
+                                           FontSize="13"/>
+                            </StackPanel>
+                            <Button x:Name="BtnToggleVideo"
+                                    Content="Start Video"
+                                    Grid.Column="1"
+                                    Style="{StaticResource PrimaryButton}"
+                                    IsEnabled="False"
+                                    Click="BtnToggleVideo_Click"/>
+                        </Grid>
+
+                        <!-- Stretch toggle -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Stretch to 16:9"
+                                           Foreground="#CCCCEE" FontSize="13"/>
+                                <TextBlock Text="Forces 4:3 content to fill 16:9 frame"
+                                           Foreground="#555577" FontSize="11"/>
+                            </StackPanel>
+                            <CheckBox x:Name="ChkStretch"
+                                      Grid.Column="1"
+                                      IsChecked="True"
+                                      VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ─ Audio Controls ─ -->
+                <Border Background="#16162A" CornerRadius="8" Padding="16" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="AUDIO CAPTURE" Style="{StaticResource SectionHeader}"/>
+
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Ellipse x:Name="AudioStatusDot" Fill="#3A3A4A"
+                                         Style="{StaticResource StatusDot}"/>
+                                <TextBlock x:Name="TxtAudioStatus"
+                                           Text="Inactive"
+                                           Foreground="#6666AA"
+                                           VerticalAlignment="Center"
+                                           FontSize="13"/>
+                            </StackPanel>
+                            <Button x:Name="BtnToggleAudio"
+                                    Content="Start Audio"
+                                    Grid.Column="1"
+                                    Style="{StaticResource PrimaryButton}"
+                                    IsEnabled="False"
+                                    Click="BtnToggleAudio_Click"/>
+                        </Grid>
+
+                        <!-- Audio level meter -->
+                        <StackPanel>
+                            <TextBlock Text="Level" Foreground="#555577" FontSize="11" Margin="0,0,0,3"/>
+                            <Grid Height="8" Background="#111122">
+                                <Rectangle x:Name="AudioLevelBar"
+                                           Fill="#57F287"
+                                           HorizontalAlignment="Left"
+                                           Width="0"/>
+                                <Border BorderBrush="#333355" BorderThickness="1"/>
+                            </Grid>
+                        </StackPanel>
+
+                        <!-- Playback output device -->
+                        <StackPanel Margin="0,12,0,0">
+                            <TextBlock Text="Playback output for Discord" Foreground="#8888BB" FontSize="12" Margin="0,0,0,4"/>
+                            <ComboBox x:Name="CmbAudioOutput"
+                                      Height="30"
+                                      Background="#111122"
+                                      Foreground="#E0E0F0"
+                                      BorderBrush="#333355"
+                                      SelectionChanged="CmbAudioOutput_SelectionChanged"/>
+                        </StackPanel>
+
+                        <TextBlock Margin="0,8,0,0"
+                                   FontSize="11" Foreground="#555577"
+                                   TextWrapping="Wrap">
+                            To avoid hearing the game twice, choose an output you do not listen to, such as HDMI/monitor audio or a virtual cable. Keep Discord sharing StretchCord with sound enabled.
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <!-- ─ Stream Window ─ -->
+                <Border Background="#16162A" CornerRadius="8" Padding="16" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="STREAM WINDOW" Style="{StaticResource SectionHeader}"/>
+                        <TextBlock Text="Open this window and share it in Discord"
+                                   Foreground="#8888BB" FontSize="12" Margin="0,0,0,10"
+                                   TextWrapping="Wrap"/>
+                        <Button x:Name="BtnOpenStreamWindow"
+                                Content="📺 Open Stream Window"
+                                Style="{StaticResource PrimaryButton}"
+                                HorizontalAlignment="Stretch"
+                                Click="BtnOpenStreamWindow_Click"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- ─ Quick Guide ─ -->
+                <Border Background="#0D0D1A" CornerRadius="8" Padding="16" Margin="0,0,0,4">
+                    <StackPanel>
+                        <TextBlock Text="QUICK GUIDE" Style="{StaticResource SectionHeader}"/>
+                        <TextBlock Foreground="#7777AA" FontSize="12" TextWrapping="Wrap"
+                                   LineHeight="20">
+1. Open your game in windowed or borderless mode&#10;2. Select the game window above&#10;3. Click Start Video → Start Audio&#10;4. Open the Stream Window&#10;5. In Discord → Share Screen → select the StretchCord stream window
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- ═══ Status Bar ════════════════════════════════════════════════════ -->
+        <Border Grid.Row="2" Background="#13131F" Padding="16,8">
+            <TextBlock x:Name="TxtStatus"
+                       Text="Ready"
+                       Foreground="#5555AA"
+                       FontSize="11"/>
+        </Border>
+    </Grid>
+</Window>
