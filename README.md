@@ -60,7 +60,8 @@ For best results:
 
 ### 2. Open StretchCord
 
-Run:
 
-```powershell
 StretchCord.exe
+
+<img width="463" height="668" alt="{E7E1B917-C120-416A-9259-1E7C31FD7FFA}" src="https://github.com/user-attachments/assets/189f6a51-4fe1-4772-aae7-428899f94906" />
+
